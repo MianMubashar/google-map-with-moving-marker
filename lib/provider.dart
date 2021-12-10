@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -43,16 +44,20 @@ class LocationProvider extends ChangeNotifier{
       notifyListeners();
   }
 
-  addMarker(int value, LatLng position) {
+  addMarker(int value, LatLng position) async {
     MarkerId markerId = MarkerId(value.toString());
-
+    List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placeMark = placemarks[0];
+    String name = placeMark.name!;
+    String locality=placeMark.locality!;
       Marker marker = Marker(
           markerId: markerId,
           position: position,
           icon: BitmapDescriptor.defaultMarker,
           infoWindow: InfoWindow(
-              title: 'Position',
+              title: '$locality $name',
               snippet: '${position.latitude} ${position.longitude}'));
+
       markers[markerId] = marker;
 
   }
